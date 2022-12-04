@@ -230,7 +230,7 @@ ggplot(mcycle, aes(x = times, y = accel)) +
        title = "Simulated Motorcycle Accident",
        subtitle = "Measurements of head acceleration")
 
-m1 <- gam(accel ~ s(times), data = mcycle, method = "REML", family = gaussian)
+m1 <- gam(accel ~ s(times), data = mcycle, family = gaussian)
 gam_splines <- model.matrix(m1) # Hier ien bisschen getrickst
 dim(gam_splines)
 
@@ -238,7 +238,7 @@ dim(gam_splines)
 net <- nn_module(
   "spline_nn",
   initialize = function() {
-    self$fc1 <- nn_linear(in_features = 10,
+    self$fc1 <- nn_linear(in_features = 2,
                           out_features = 1, bias = F)
   },
   
@@ -264,7 +264,7 @@ for (t in 1:3000) {
   ### -------- compute loss -------- 
   loss <- nnf_mse_loss(y_pred$view(133),
                        accel_torch) +
-    0.01*spline_approach$parameters$fc1.weight$abs()$sum()
+    0.01*spline_approach$parameters$fc1.weight$abs()$sum() 
   if (t %% 10 == 0)
     cat("Epoch: ", t, "   Loss: ", loss$item(), "\n")
   
